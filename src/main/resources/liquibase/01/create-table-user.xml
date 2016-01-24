@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="v1" author="o.lutsevich">
+        <!-- Drop tables if exists -->
+        <sql splitStatements="true">
+            DROP TABLE IF EXISTS `users`;
+        </sql>
+
+        <!-- Create tables -->
+        <sql splitStatements="true">
+            CREATE TABLE `users` (
+            `userId` int NOT NULL AUTO_INCREMENT,
+            `username` varchar(25) NOT NULL UNIQUE,
+            `password` varchar(25) NOT NULL,
+            `email` varchar(25) NOT NULL UNIQUE,
+            `games` int NOT NULL DEFAULT '0',
+            `losses` int NOT NULL DEFAULT '0',
+            PRIMARY KEY (`userId`)
+            ) DEFAULT CHARSET=utf8;
+
+            CREATE TABLE `games` (
+            `gameId` int NOT NULL AUTO_INCREMENT,
+            `member1` varchar(25) NOT NULL,
+            `member2` varchar(25) NOT NULL,
+            `status` varchar(25) NOT NULL,
+            `time` TIME NOT NULL,
+            PRIMARY KEY (`gameId`)
+            ) DEFAULT CHARSET=utf8;
+
+        </sql>
+
+
+        <!-- Loading of Data -->
+        <loadData encoding="UTF-8" file="liquibase/01/users.csv" tableName="users" separator=";">
+            <column name="username" type="STRING"/>
+            <column name="password" type="STRING"/>
+            <column name="email" type="STRING"/>
+        </loadData>
+
+    </changeSet>
+
+
+</databaseChangeLog>
