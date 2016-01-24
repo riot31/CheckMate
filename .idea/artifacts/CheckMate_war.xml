@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="CheckMate:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="CheckMate.war">
+      <element id="artifact" artifact-name="CheckMate:war exploded" />
+    </root>
+  </artifact>
+</component>
