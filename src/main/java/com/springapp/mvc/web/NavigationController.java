@@ -1,8 +1,6 @@
 package com.springapp.mvc.web;
 
-import com.springapp.mvc.service.UserService;
 import com.springapp.mvc.service.util.MessageUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,5 +14,9 @@ public class NavigationController {
 	public String printWelcome(ModelMap model) {
 		model.addAttribute("message", MessageUtils.getMessage("message.hello"));
 		return "index";
+	}
+	@RequestMapping(value = "game", method = RequestMethod.GET)
+	public String showGame() {
+		return "checkmate";
 	}
 }

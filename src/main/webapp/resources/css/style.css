@@ -6,3 +6,101 @@ body{
     position: absolute;
     bottom: 3%;
 }
+
+[draggable] {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -khtml-user-drag: element;
+    -webkit-user-drag: element;
+}
+.columns {
+    position: absolute;
+    background-image: url(../images/chessBoard.jpg);
+    background-size: 100% 100%;
+    width: 490px;
+    height: 490px;
+    margin-left: 50px;
+}
+.column {
+    height: 45px;
+    width: 43px;
+    margin: 8px 7px 9px 11px;
+    display: block;
+    float: left;
+    cursor: move;
+}
+
+.column.action .item {
+    margin: 45% 48%;
+    width: 10px;
+    height: 10px;
+    background: #1CD7D7;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 5px;
+}
+
+.column.over {
+    opacity: 0.2;
+    color: #ccc;
+}
+
+
+.pieces {
+    width: 100%;
+    height: 100%;
+    background-image: url(../images/figur.png);
+    background-repeat: no-repeat;
+}
+
+
+.pieces.pawn-black {
+    background-position: -325px -225px;
+}
+
+.pieces.pawn-white {
+    background-position: -325px -160px;
+}
+
+.pieces.king-black {
+    background-position: -15px -225px;
+}
+
+
+.pieces.king-white {
+    background-position: -15px -160px;
+}
+
+.pieces.queen-black {
+    background-position: -77px -225px;
+}
+
+.pieces.queen-white {
+    background-position: -77px -160px;
+}
+
+.pieces.castle-black {
+    background-position: -141px -225px;
+}
+
+.pieces.castle-white {
+    background-position: -141px -160px;
+}
+
+.pieces.knight-black {
+    background-position: -265px -225px;
+}
+
+.pieces.knight-white {
+    background-position: -265px -160px;
+}
+
+.pieces.bishop-black {
+    background-position: -200px -225px;
+}
+
+.pieces.bishop-white {
+    background-position: -200px -160px;
+}
