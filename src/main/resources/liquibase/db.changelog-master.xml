@@ -6,5 +6,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="classpath:liquibase/01/create-table-user.xml"/>
+    <include file="classpath:liquibase/02/security-remember-me.xml"/>
 
 </databaseChangeLog>

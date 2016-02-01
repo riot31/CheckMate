@@ -15,6 +15,7 @@ public class NavigationController {
 		model.addAttribute("message", MessageUtils.getMessage("message.hello"));
 		return "index";
 	}
+
 	@RequestMapping(value = "game", method = RequestMethod.GET)
 	public String showGame() {
 		return "checkmate";

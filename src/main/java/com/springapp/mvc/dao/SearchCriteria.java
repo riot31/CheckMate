@@ -11,6 +11,11 @@ public class SearchCriteria {
         return nameColumn;
     }
 
+    public SearchCriteria(String nameColumn, String value) {
+        this.nameColumn = nameColumn;
+        this.value = value;
+    }
+
     public void setNameColumn(String nameColumn) {
         this.nameColumn = nameColumn;
     }
