@@ -20,4 +20,6 @@ public interface BaseService<T, ID extends Serializable> {
     List<T> findByCriteria(List<SearchCriteria> criterias);
 
     T findByCriteria(SearchCriteria criteria);
+
+    List<T> findAllByCriteria(SearchCriteria criteria);
 }

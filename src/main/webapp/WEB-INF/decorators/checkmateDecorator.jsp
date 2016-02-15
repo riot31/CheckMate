@@ -21,7 +21,7 @@
         <li><a href="/">Главная</a></li>
 
         <li>
-            <a href="">Найти игру</a>
+            <a href="/game/show">Найти игру</a>
             <ul>
                 <li id="createGame">
                     <label for="modal-3">Создать игру</label>
@@ -54,7 +54,7 @@
 
                     </li>
                     <li>
-                        <a href="">Текущие игры</a>
+                        <a href="/game/byUser">Мои игры</a>
 
                     </li>
                     <li>

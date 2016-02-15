@@ -2,6 +2,7 @@ package com.springapp.mvc.web;
 
 import com.springapp.mvc.entity.Game;
 import com.springapp.mvc.service.GameService;
+import com.springapp.mvc.service.enums.GameStatus;
 import com.springapp.mvc.service.form.GameForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
+import java.security.Principal;
 import java.util.Map;
 
 /**
@@ -33,6 +35,21 @@ public class GameController {
     public String showGames(Map<String, Object> map) {
         map.put("gameList", gameService.find());
         return "gameList";
+    }
+
+    @RequestMapping(value = "/byUser", method = RequestMethod.GET)
+    public String showGameUser(Map<String, Object> map, Principal principal) {
+        map.put("gameList", gameService.byUsername(principal.getName()));
+        return "gameUser";
+    }
+
+    @RequestMapping(value = "/take", method = RequestMethod.GET)
+    public String take(String uuid, Principal principal) {
+        Game game = gameService.find(uuid);
+        game.setMember2(principal.getName());
+        game.setStatus(GameStatus.START.getStatus());
+        gameService.saveOrUpdate(game);
+        return "redirect:/go?id" + uuid;
     }
 
     @RequestMapping(value = "/go", method = RequestMethod.GET)

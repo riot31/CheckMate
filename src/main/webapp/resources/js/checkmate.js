@@ -1,3 +1,4 @@
+//    game
 var doc = document;
 var parent = doc.getElementsByClassName("columns")[0];
 
@@ -5,11 +6,25 @@ var items = parent.getElementsByClassName("column");
 
 var dragSrcEl = null;
 
+var currentUser = doc.getElementById("username").textContent;
+
+var stroke = null;
+
+function parentIndexOf(el) {
+    for (var i = 0; i < parent.children.length; i++) {
+        if (parent.children[i] === el) {
+            return i;
+        }
+    }
+}
+
 function showMove(e) {
+    stroke = "";
     var e = e || event;
     var target = e.target || e.srcElement;
     for (var i = 0; i < parent.children.length; i++) {
         if (parent.children[i] == target) {
+            stroke += i;
             if (parent.children[i].querySelectorAll("[class*='pawn']").length) {
                 showPawn(e, i);
             }
@@ -33,6 +48,7 @@ function showMove(e) {
             if (parent.children[i].querySelectorAll("[class*='king']").length) {
                 showKing(e, i);
             }
+            break;
         }
     }
 }
@@ -217,19 +233,23 @@ function handleDragLeave(e) {
 }
 
 function handleDrop(e) {
-
     if (e.stopPropagation) {
         e.stopPropagation();
     }
 
     if (dragSrcEl != this) {
         if (this.classList.contains('action')) {
-
-            dragSrcEl.innerHTML = '<div class="item">&emsp;</div>';
-            this.innerHTML = e.dataTransfer.getData('text/html');
+            //double swap
+            //dragSrcEl.innerHTML = '<div class="item">&emsp;</div>';
+            //this.innerHTML = e.dataTransfer.getData('text/html');
+            [].forEach.call(items, function (col) {
+                col.removeEventListener('dragstart', handleDragStart, false);
+            });
+            stroke += " " + parentIndexOf(this);
+            sendStroke(stroke);
         }
-    }
 
+    }
     return false;
 }
 
@@ -242,11 +262,122 @@ function handleDragEnd(e) {
     });
 }
 
+
+function changeDragStart(color) {
+    [].forEach.call(items, function (col) {
+        if (color == "black" && col.querySelectorAll("[class*='black']").length > 0 && currentUser == blackUser) {
+            col.addEventListener('dragstart', handleDragStart, false);
+        }
+        if (color == "white" && col.querySelectorAll("[class*='white']").length > 0 && currentUser == whiteUser) {
+            col.addEventListener('dragstart', handleDragStart, false);
+        }
+    });
+}
+
+
 [].forEach.call(items, function (col) {
-    col.addEventListener('dragstart', handleDragStart, false);
     col.addEventListener('dragenter', handleDragEnter, false);
     col.addEventListener('dragover', handleDragOver, false);
     col.addEventListener('dragleave', handleDragLeave, false);
     col.addEventListener('drop', handleDrop, false);
     col.addEventListener('dragend', handleDragEnd, false);
 });
+if (strokes.length > 0) {
+    [].forEach.call(strokes, function (message) {
+        runStroke(message);
+    });
+
+}
+
+function runStroke(coordination) {
+    var tempStroke = coordination.split(" ");
+    parent.children[Number(tempStroke[1])].innerHTML = parent.children[Number(tempStroke[0])].innerHTML;
+    parent.children[Number(tempStroke[0])].innerHTML = '<div class="item">&emsp;</div>';
+}
+
+(function () {
+    if (strokes.length % 2 == 0) {
+        changeDragStart("white");
+    } else {
+        changeDragStart("black");
+    }
+}());
+
+
+//chat
+var socket = new SockJS("/room")
+var stompClient = Stomp.over(socket);
+stompClient.connect({}, function (frame) {
+    stompClient.subscribe("/topic/" + gameUuid, function (message) {
+        if (JSON.parse(message.body).type == "message") {
+            if (JSON.parse(message.body).username == currentUser) {
+                showMessageSelf(JSON.parse(message.body).message);
+            } else {
+                showMessageOther(JSON.parse(message.body).message);
+            }
+            doc.getElementById("message").value = "";
+        } else {
+            showStroke(JSON.parse(message.body).username, JSON.parse(message.body).message);
+        }
+
+        scrollDown();
+    })
+});
+
+function sendMessage() {
+    var message = doc.getElementById("message").value;
+    if (message != "") {
+        stompClient.send("/checkmate/room/" + gameUuid, {}, JSON.stringify({
+            "message": message,
+            "type": "message",
+            "username": currentUser
+        }));
+
+    }
+}
+
+function sendStroke(stroke) {
+    stompClient.send("/checkmate/room/" + gameUuid, {}, JSON.stringify({
+        "message": stroke,
+        "type": "stroke",
+        "username": currentUser
+    }));
+}
+
+function showMessageOther(message) {
+    $('#discussion').append('<li class="other"><div class="avatar"><img src="http://s3-us-west-2.amazonaws.com/s.cdpn.io/3/profile/profile-80_20.jpg" /></div><div class="messages"><xmp>' + message + '</xmp></div></li>');
+}
+
+function showMessageSelf(message) {
+    $('#discussion').append('<li class="self"><div class="avatar"><img src="http://s3-us-west-2.amazonaws.com/s.cdpn.io/5/profile/profile-80_9.jpg" /></div><div class="messages"><xmp>' + message + '</xmp></div></li>');
+}
+
+function showStroke(from, message) {
+    $('#discussion').append('<li class="stroke"><p><em><b>' + from + '</b> ' + message + '</em></p></li>');
+    runStroke(message);
+    if (from == whiteUser) {
+        changeDragStart("black");
+    } else {
+        changeDragStart("white");
+    }
+}
+
+function scrollDown() {
+    var discussion = doc.getElementById('discussion');
+    $("#discussion").animate({scrollTop: discussion.scrollHeight}, 400);
+}
+
+var sender = doc.getElementById('sender');
+sender.addEventListener('click', sendMessage, false);
+document.querySelector('#message').addEventListener('keypress', function (e) {
+    var key = e.which || e.keyCode;
+    if (key === 13) {
+        sendMessage();
+    }
+});
+
+
+//scroll dow
+(function () {
+    scrollDown();
+}())

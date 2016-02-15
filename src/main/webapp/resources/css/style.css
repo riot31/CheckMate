@@ -507,6 +507,8 @@ body {
 .module {
     margin: 20px 10% 20px auto;
     width: 300px;
+    position: relative;
+    z-index: 1;
 }
 
 .top-bar {
@@ -620,6 +622,7 @@ body {
 .stroke {
     color: #555555;
     font-size: 0.7rem;
+    line-height: 0;
 }
 
 .messages {
@@ -646,4 +649,7 @@ body {
     }
 }
 
+.container .component tr {
+    cursor: pointer;
+}
 

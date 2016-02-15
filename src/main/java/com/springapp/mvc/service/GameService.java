@@ -15,4 +15,6 @@ public interface GameService extends BaseService<Game, String> {
     GameForm toForm(Game game);
 
     List<Message> getStrokes(Game game);
+
+    List<Game> byUsername(String username);
 }

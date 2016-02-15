@@ -16,4 +16,6 @@ public interface BaseDao<T, ID extends Serializable> {
     void remove(T entity);
 
     T findByCriteria(SearchCriteria criteria);
+
+    List<T> findAllByCriteria(SearchCriteria criteria);
 }

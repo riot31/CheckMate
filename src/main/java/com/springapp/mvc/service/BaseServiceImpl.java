@@ -46,4 +46,8 @@ public abstract class BaseServiceImpl<T, ID extends Serializable> {
     public T findByCriteria(SearchCriteria criteria) {
         return baseDao.findByCriteria(criteria);
     }
+
+    public List<T> findAllByCriteria(SearchCriteria criteria) {
+        return baseDao.findAllByCriteria(criteria);
+    }
 }

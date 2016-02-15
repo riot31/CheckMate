@@ -52,4 +52,7 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> {
         return temp.isEmpty() ? null : temp.get(0);
     }
 
+    public List<T> findAllByCriteria(SearchCriteria criteria) {
+        return getSession().createCriteria(entityClass).add(Restrictions.eq(criteria.getNameColumn(), criteria.getValue())).list();
+    }
 }
