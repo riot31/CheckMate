@@ -8,9 +8,11 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 
     <title><sitemesh:write property="title"/></title>
-    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
     <link rel="stylesheet" href="/resources/css/style.css"/>
 
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="/resources/js/prefixfree.min.js"></script>
+    <sitemesh:write property='head'/>
 </head>
 <body>
 
@@ -21,18 +23,18 @@
         <li>
             <a href="">Найти игру</a>
             <ul>
-                <li>
-                    <a href="">HTML/CSS</a>
+                <li id="createGame">
+                    <label for="modal-3">Создать игру</label>
                 </li>
                 <li>
-                    <a href="">Графика</a>
+                    <a href="/game/show">Список игр</a>
                 </li>
 
                 <li>
-                    <a href="">Разработка</a>
+                    <a href="">Играть в ботом</a>
                 </li>
                 <li>
-                    <a href="">Веб дизайн</a>
+                    <a href="">Задачи</a>
                 </li>
             </ul>
         </li>
@@ -44,15 +46,15 @@
         </sec:authorize>
         <sec:authorize access="isAuthenticated()">
             <li>
-                <a href="">${username}</a>
+                <a href="" id="username">${username}</a>
                 <ul>
 
                     <li>
-                        <a href="">Пункт 1</a>
+                        <a href="">Мой аккаунт</a>
 
                     </li>
                     <li>
-                        <a href="">Пункт 2</a>
+                        <a href="">Текущие игры</a>
 
                     </li>
                     <li>
@@ -125,6 +127,35 @@
     </div>
 </div>
 
+
+<div class="modal">
+    <input type="checkbox" class="modal-open" id="modal-3" hidden/>
+
+    <div class="modal-wrap" aria-hidden="true" role="dialog">
+        <label for="modal-3" class="modal-overlay"></label>
+
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h2>Создать игру</h2>
+                <label for="modal-3" class="btn-close" aria-hidden="true">×</label>
+            </div>
+            <div class="modal-body">
+                <form action="/game/create" method="post">
+                    <input name="headline" placeholder="${f:getMessage("form.placeholder.game.headline")}" type="text" class="textbox"/>
+                    <input type="hidden" name="member1" value="${username}"/>
+                    <input list="rivals" placeholder="${f:getMessage("form.placeholder.member2")}" name="member2" class="textbox"/>
+                    <datalist id="rivals">
+                    </datalist>
+
+                    <p>${f:getMessage("form.createGame")}</p>
+                    <input name="submit" class="btn btn-form" type="submit" value="${f:getMessage('form.submit')}"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/resources/js/main.js"></script>
 
 </body>
 </html>

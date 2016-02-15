@@ -8,7 +8,7 @@
     <name>CheckMate</name>
 
     <properties>
-        <spring.version>4.1.1.RELEASE</spring.version>
+        <spring.version>4.2.4.RELEASE</spring.version>
         <hibernate.version>4.3.6.Final</hibernate.version>
         <log4j.version>1.2.17</log4j.version>
         <jdk.version>1.7</jdk.version>
@@ -25,6 +25,25 @@
     </properties>
 
     <dependencies>
+
+        <!-- web socket -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-websocket</artifactId>
+            <version>7.0.52</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 
         <!-- dozer -->
         <dependency>

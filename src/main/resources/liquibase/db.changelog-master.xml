@@ -7,5 +7,7 @@
 
     <include file="classpath:liquibase/01/create-table-user.xml"/>
     <include file="classpath:liquibase/02/security-remember-me.xml"/>
+    <include file="classpath:liquibase/03/replace_table_game.xml"/>
+    <include file="classpath:liquibase/03/update_structur_game.xml"/>
 
 </databaseChangeLog>

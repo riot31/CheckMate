@@ -31,6 +31,6 @@ public class UserServiceImpl extends BaseServiceImpl<User, Integer> implements U
     }
 
     public UserForm toForm(User user) {
-        return converter.toDto(user);
+        return converter.toForm(user);
     }
 }

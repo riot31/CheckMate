@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="v3-2-3" author="o.lutsevich">
+        <!-- Drop tables if exists -->
+        <sql splitStatements="true">
+            DROP TABLE IF EXISTS `messages`;
+            DROP TABLE IF EXISTS `games`;
+            DROP TABLE IF EXISTS `game`;
+
+        </sql>
+
+        <!-- Create tables -->
+        <sql splitStatements="true">
+            CREATE TABLE `games` (
+            `uuid` varchar(36) NOT NULL,
+            `member1` varchar(25) NOT NULL,
+            `member2` varchar(25),
+            `status` varchar(25) NOT NULL,
+            `headline` varchar(25),
+            `time` TIME NOT NULL,
+            PRIMARY KEY (`uuid`)
+            ) DEFAULT CHARSET=utf8;
+
+            CREATE TABLE `messages` (
+            `messageId` int NOT NULL AUTO_INCREMENT,
+            `gameUuid` varchar(36) NOT NULL,
+            `username` varchar(25) NOT NULL,
+            `message` varchar(255) NOT NULL,
+            `type` varchar(10) NOT NULL,
+            PRIMARY KEY (`messageId`)
+            ) DEFAULT CHARSET=utf8;
+
+            ALTER TABLE `messages` ADD CONSTRAINT `messages_fk0` FOREIGN KEY (`gameUuid`) REFERENCES `games`(`uuid`);
+
+        </sql>
+
+    </changeSet>
+
+
+</databaseChangeLog>

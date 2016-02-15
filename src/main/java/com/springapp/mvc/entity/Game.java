@@ -1,7 +1,14 @@
 package com.springapp.mvc.entity;
 
+import com.springapp.mvc.service.enums.GameStatus;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by o.lutsevich on 24.1.16.
@@ -10,9 +17,11 @@ import java.util.Date;
 @Table(name = "games")
 public class Game {
     @Id
-    @GeneratedValue
-    @Column(name = "gameId")
-    private Integer gameId;
+    @Column(name = "uuid")
+    private String uuid = UUID.randomUUID().toString();
+
+    @Column(name = "headline")
+    private String headline;
 
     @Column(name = "member1")
     private String member1;
@@ -21,17 +30,29 @@ public class Game {
     private String member2;
 
     @Column(name = "status")
-    private String status;
+    private String status = GameStatus.WAITING.getStatus();
 
     @Column(name = "time")
-    private Date time;
+    private Date time = new Date();
 
-    public Integer getGameId() {
-        return gameId;
+    @OneToMany(targetEntity = Message.class, mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
+    private List<Message> messageList = new ArrayList<Message>(0);
+
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setGameId(Integer gameId) {
-        this.gameId = gameId;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getHeadline() {
+        return headline;
+    }
+
+    public void setHeadline(String headline) {
+        this.headline = headline;
     }
 
     public String getMember1() {
@@ -64,5 +85,13 @@ public class Game {
 
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    public List<Message> getMessageList() {
+        return messageList;
+    }
+
+    public void setMessageList(List<Message> messageList) {
+        this.messageList = messageList;
     }
 }

@@ -9,26 +9,26 @@ import java.lang.reflect.Type;
 /**
  * Created by o.lutsevich on 2.2.16.
  */
-public abstract class AbstractConverter<TEntity, TDto> {
+public abstract class AbstractConverter<TEntity, TForm> {
     @Autowired
     protected Mapper mapper;
 
     private final Class<TEntity> entityClass;
-    private final Class<TDto> dtoClass;
+    private final Class<TForm> dtoClass;
 
     @SuppressWarnings("unchecked")
     protected AbstractConverter() {
         Type superclassType = getClass().getGenericSuperclass();
         ParameterizedType parameterizedType = (ParameterizedType) superclassType;
         entityClass = (Class<TEntity>) parameterizedType.getActualTypeArguments()[0];
-        dtoClass = (Class<TDto>) parameterizedType.getActualTypeArguments()[1];
+        dtoClass = (Class<TForm>) parameterizedType.getActualTypeArguments()[1];
     }
 
-    public TEntity toEntity(TDto dto) {
+    public TEntity toEntity(TForm dto) {
         return dto != null ? mapper.map(dto, entityClass) : null;
     }
 
-    public TDto toDto(TEntity entity) {
+    public TForm toForm(TEntity entity) {
         return entity != null ? mapper.map(entity, dtoClass) : null;
     }
 
