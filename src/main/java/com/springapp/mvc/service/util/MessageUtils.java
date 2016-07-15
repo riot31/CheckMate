@@ -1,5 +1,7 @@
 package com.springapp.mvc.service.util;
 
+import com.springapp.mvc.service.enums.Notations;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -11,6 +13,10 @@ import java.util.ResourceBundle;
 public class MessageUtils {
     private static final String DEFAULT_RESOURCE_BUNDLE = "i18n/messages";
     private static final String UNRESOLVED_MESSAGE_FORMAT = "???%s???";
+    private static final String FORMAT_MESSAGE_STROKE = " походил с %s на %s";
+    private static final Integer COUNT_COORDINATE = 2;
+    private static final String REGEX_MESSAGE_STROKE = " ";
+
 
     public static String getMessage(String key, Object[] params, Locale locale) {
         if (locale == null) {
@@ -36,6 +42,13 @@ public class MessageUtils {
         return getMessage(key, null, null);
     }
 
-
+    public static String castToStroke(String message) {
+        String[] tempList = message.split(REGEX_MESSAGE_STROKE);
+        if (tempList.length == COUNT_COORDINATE) {
+            String result = FORMAT_MESSAGE_STROKE;
+            return String.format(result, Notations.positionOf(tempList[0]).name(), Notations.positionOf(tempList[1]).name());
+        }
+        return UNRESOLVED_MESSAGE_FORMAT;
+    }
 }
 

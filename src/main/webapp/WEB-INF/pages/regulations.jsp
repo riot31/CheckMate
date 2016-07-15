@@ -5,12 +5,8 @@
 <head>
     <title>Good game!</title>
 
-    <script src="/resources/js/sockjs-0.3.4.js"></script>
-    <script src="/resources/js/stomp.js"></script>
 </head>
 <body>
-
-<h3 id="targetStroke">Loading...</h3>
 
 <div class="columns">
     <div class="column" draggable="true" title="A8 - 0">
@@ -207,83 +203,8 @@
     </div>
 </div>
 
-<section class="module">
 
-    <header class="top-bar">
-
-        <div class="left">
-            <span class="icon typicons-message"></span>
-
-            <h1>Hangouts</h1>
-        </div>
-
-        <div class="right">
-            <span class="icon typicons-minus"></span>
-            <span class="icon typicons-times"></span>
-        </div>
-
-    </header>
-
-    <ol class="discussion" id="discussion">
-        <c:forEach items="${game.messageList}" var="message">
-            <c:if test="${message.username == username and message.type == 'message'}">
-                <li class="self">
-                    <div class="avatar">
-                        <img src="http://s3-us-west-2.amazonaws.com/s.cdpn.io/3/profile/profile-80_20.jpg"/>
-                    </div>
-                    <div class="messages">
-                        <p>${message.message}</p>
-                    </div>
-                </li>
-            </c:if>
-            <c:if test="${message.type == 'stroke'}">
-                <li class="stroke">
-                    <p><em><b>${message.username}</b> ${f:castToStroke(message.message)}</em></p>
-                </li>
-            </c:if>
-            <c:if test="${message.type == 'end'}">
-                <li class="end">
-                    <p>${message.message}</p>
-                </li>
-            </c:if>
-
-            <c:if test="${message.username != username and message.type == 'message'}">
-                <li class="other">
-                    <div class="avatar">
-                        <img src="http://s3-us-west-2.amazonaws.com/s.cdpn.io/5/profile/profile-80_9.jpg"/>
-                    </div>
-                    <div class="messages">
-                        <p>${message.message}</p>
-                    </div>
-                </li>
-            </c:if>
-        </c:forEach>
-    </ol>
-    <div class="send">
-        <input id="message" type="text" placeholder="${f:getMessage("message.placeholder")}"/>
-        <input type="button" value="send" id="sender"/>
-    </div>
-</section>
 <script>
-    // init jsp
-    var snd = new Audio("/resources/audio/ICQ.mp3"); // buffers automatically when created
-    var gameUuid = "${game.uuid}";
-    var strokes = [];
-    var socketSuffix = "";
-    var whiteUser = "${game.member1}";
-    var blackUser = "${game.member2}";
-    var statusGame = "${game.status}";
-    var aTime;
-    var bTime;
-
-    if(blackUser == "${socketSuffix}") {
-        socketSuffix = "/" + blackUser + "/";
-    }
-
-    <c:forEach items="${strokeList}" var="stroke">
-    strokes.push("${stroke.message}");
-    </c:forEach>
-
     //    game
     var doc = document;
     var parent = doc.getElementsByClassName("columns")[0];
@@ -292,7 +213,6 @@
 
     var dragSrcEl = null;
 
-    var currentUser = doc.getElementById("username").textContent;
 
     var stroke = null;
 
@@ -526,13 +446,24 @@
         if (dragSrcEl != this) {
             if (this.classList.contains('action')) {
                 //double swap
-                //dragSrcEl.innerHTML = '<div class="item">&emsp;</div>';
-                //this.innerHTML = e.dataTransfer.getData('text/html');
+                dragSrcEl.innerHTML = '<div class="item">&emsp;</div>';
+                this.innerHTML = e.dataTransfer.getData('text/html');
                 [].forEach.call(items, function (col) {
                     col.removeEventListener('dragstart', handleDragStart, false);
                 });
-                stroke += " " + parentIndexOf(this);
-                sendStroke(stroke);
+                strokes = strokes + 1;
+                (function () {
+                    if (strokes % 2 == 0) {
+                        changeDragStart("white");
+                    } else {
+                        changeDragStart("black");
+                    }
+                }());
+                if (this.querySelectorAll("[class*='king']").length = 0) {
+                    [].forEach.call(items, function (col) {
+                        col.removeEventListener('dragstart', handleDragStart, false);
+                    });
+                }
             }
         }
         return false;
@@ -549,193 +480,36 @@
 
 
     function changeDragStart(color) {
-        document.getElementById("targetStroke").innerHTML = "Ход: " + (color == 'white' ? whiteUser : blackUser);
         [].forEach.call(items, function (col) {
-            if (color == "black" && col.querySelectorAll("[class*='black']").length > 0 && currentUser == blackUser) {
+            if (color == "black" && col.querySelectorAll("[class*='black']").length > 0) {
                 col.addEventListener('dragstart', handleDragStart, false);
             }
-            if (color == "white" && col.querySelectorAll("[class*='white']").length > 0 && currentUser == whiteUser) {
+            if (color == "white" && col.querySelectorAll("[class*='white']").length > 0) {
                 col.addEventListener('dragstart', handleDragStart, false);
             }
         });
     }
 
-    function runStroke(coordination) {
-        var tempStroke = coordination.split(" ");
-        parent.children[Number(tempStroke[1])].innerHTML = parent.children[Number(tempStroke[0])].innerHTML;
-        parent.children[Number(tempStroke[0])].innerHTML = '<div class="item">&emsp;</div>';
-        if (statusGame !== "завершена") {
-            if (document.querySelectorAll("[class*='king']").length == 1) {
-                statusGame = "завершена";
-                if (document.querySelector("[class*='king-wh")) {
-                    sendEnd(whiteUser);
-                } else {
-                    sendEnd(blackUser);
-                }
-            }
-        }
-    }
-
-
-    //chat
-    //TODO вывести оповещение если упал connection
-    var socket = new SockJS("/room");
-    var stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-        stompClient.subscribe("/topic/" + gameUuid, function (message) {
-            if (JSON.parse(message.body).type == "message") {
-                if (JSON.parse(message.body).username == currentUser) {
-                    showMessageSelf(JSON.parse(message.body).message);
-                } else {
-                    showMessageOther(JSON.parse(message.body).message);
-                }
-                doc.getElementById("message").value = "";
-            } else {
-                if (JSON.parse(message.body).type == "stroke") {
-                    bTime = Date.now();
-                    showTime(bTime - aTime);
-                    showStroke(JSON.parse(message.body).username, JSON.parse(message.body).message);
-                } else {
-                    showEnd(JSON.parse(message.body).message);
-                }
-            }
-            scrollDown();
-        })
-    });
-
-    function showTime(time) {
-        if (document.getElementById("targetStroke").innerHTML != "Ход: " + currentUser) {
-            $('#discussion').append('<li class="stroke"><p><em><b>' + 'Время размышления' + '</b> ' + (time / 600) + '</em></p></li>');
-        }
-    }
-
-    function sendMessage() {
-        var message = doc.getElementById("message").value;
-        if (message != "") {
-            stompClient.send("/checkmate/room/"  + gameUuid, {}, JSON.stringify({
-                "message": message,
-                "type": "message",
-                "username": currentUser
-            }));
-
-        }
-    }
-
-    function sendStroke(stroke) {
-        aTime = Date.now();
-        stompClient.send("/checkmate/room/" + socketSuffix + gameUuid, {}, JSON.stringify({
-            "message": stroke,
-            "type": "stroke",
-            "username": currentUser
-        }));
-        if(socketSuffix !== "") {
-            showStroke(currentUser, stroke);
-        }
-    }
-
-    function sendEnd(user) {
-        stompClient.send("/checkmate/room/end/" + gameUuid, {}, JSON.stringify({
-            "message": user + " win!",
-            "type": "end",
-            "username": user
-        }));
-    }
-
-    function showMessageOther(message) {
-        $('#discussion').append('<li class="other"><div class="avatar"><img src="http://s3-us-west-2.amazonaws.com/s.cdpn.io/3/profile/profile-80_20.jpg" /></div><div class="messages"><xmp>' + message + '</xmp></div></li>');
-    }
-
-    function showMessageSelf(message) {
-        $('#discussion').append('<li class="self"><div class="avatar"><img src="http://s3-us-west-2.amazonaws.com/s.cdpn.io/5/profile/profile-80_9.jpg" /></div><div class="messages"><xmp>' + message + '</xmp></div></li>');
-    }
-
-    function showStroke(from, message) {
-        $('#discussion').append('<li class="stroke"><p><em><b>' + from + '</b> ' + getStroke(message) + '</em></p></li>');
-        if(from !== currentUser) {
-            snd.play();
-        }
-        runStroke(message);
-
-        if (from == whiteUser) {
-            changeDragStart("black");
-        } else {
-            changeDragStart("white");
-        }
-    }
-
-    function showEnd(message) {
-        $('#discussion').append('<li class="end"><p>' + message + '</p></li>');
+    if (statusGame != 'завершена') {
         [].forEach.call(items, function (col) {
-            col.removeEventListener('dragstart', handleDragStart, false);
+            col.addEventListener('dragenter', handleDragEnter, false);
+            col.addEventListener('dragover', handleDragOver, false);
+            col.addEventListener('dragleave', handleDragLeave, false);
+            col.addEventListener('drop', handleDrop, false);
+            col.addEventListener('dragend', handleDragEnd, false);
         });
-    }
-
-    function scrollDown() {
-        var discussion = doc.getElementById('discussion');
-        $("#discussion").animate({scrollTop: discussion.scrollHeight}, 400);
-    }
-
-    var sender = doc.getElementById('sender');
-    sender.addEventListener('click', sendMessage, false);
-    document.querySelector('#message').addEventListener('keypress', function (e) {
-        var key = e.which || e.keyCode;
-        if (key === 13) {
-            sendMessage();
-        }
-    });
-
-
-    //scroll dow
-    (function () {
-        scrollDown();
-    }());
-
-
-    function getStroke(message) {
-        var coordinate = message.split(" ");
-        var notations = [
-            "A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8",
-            "A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7",
-            "A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6",
-            "A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5",
-            "A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4",
-            "A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3",
-            "A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2",
-            "A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"
-        ];
-        return " походил с " + notations[coordinate[0]] + " на " + notations[coordinate[1]];
-    }
-    $(document).ready(function() {
-        if (strokes.length > 0) {
-            [].forEach.call(strokes, function (message, index) {
-                setTimeout(runStroke, 300 * index, message);
-            });
-        }
-
-        setTimeout(function () {
-            if (statusGame != 'завершена') {
-                [].forEach.call(items, function (col) {
-                    col.addEventListener('dragenter', handleDragEnter, false);
-                    col.addEventListener('dragover', handleDragOver, false);
-                    col.addEventListener('dragleave', handleDragLeave, false);
-                    col.addEventListener('drop', handleDrop, false);
-                    col.addEventListener('dragend', handleDragEnd, false);
-                });
-                (function () {
-
-
-                    if (strokes.length % 2 == 0) {
-                        changeDragStart("white");
-                    } else {
-                        changeDragStart("black");
-                    }
-                }());
+        (function () {
+            if (strokes % 2 == 0) {
+                changeDragStart("black");
             } else {
-                document.getElementById("targetStroke").innerHTML = "Игра завершена";
+                changeDragStart("white");
             }
-        }, 300 * strokes.length);
+        }());
+    }
 
-    })
+
+    var statusGame = "";
+    var strokes = 0;
 </script>
 
 </body>

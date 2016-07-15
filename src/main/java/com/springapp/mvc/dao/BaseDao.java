@@ -1,5 +1,7 @@
 package com.springapp.mvc.dao;
 
+import org.hibernate.criterion.Criterion;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -18,4 +20,6 @@ public interface BaseDao<T, ID extends Serializable> {
     T findByCriteria(SearchCriteria criteria);
 
     List<T> findAllByCriteria(SearchCriteria criteria);
+
+    List<T> findAllByCriterias(List<Criterion> criteriaList);
 }

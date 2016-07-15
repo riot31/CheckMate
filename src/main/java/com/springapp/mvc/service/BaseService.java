@@ -1,6 +1,7 @@
 package com.springapp.mvc.service;
 
 import com.springapp.mvc.dao.SearchCriteria;
+import org.hibernate.criterion.Criterion;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,4 +23,6 @@ public interface BaseService<T, ID extends Serializable> {
     T findByCriteria(SearchCriteria criteria);
 
     List<T> findAllByCriteria(SearchCriteria criteria);
+
+    List<T> findAllByCriterias(List<Criterion> criteriaList);
 }

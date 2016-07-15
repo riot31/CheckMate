@@ -3,6 +3,8 @@ package com.springapp.mvc.service;
 import com.springapp.mvc.entity.Message;
 import com.springapp.mvc.service.form.MessageForm;
 
+import java.util.List;
+
 /**
  * Created by o.lutsevich on 9.2.16.
  */

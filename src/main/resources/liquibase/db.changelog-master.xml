@@ -9,5 +9,8 @@
     <include file="classpath:liquibase/02/security-remember-me.xml"/>
     <include file="classpath:liquibase/03/replace_table_game.xml"/>
     <include file="classpath:liquibase/03/update_structur_game.xml"/>
+    <include file="classpath:liquibase/04/refactor_game_table.xml"/>
+    <include file="classpath:liquibase/04/add_offers.xml"/>
+    <include file="classpath:liquibase/05/add_boots.xml"/>
 
 </databaseChangeLog>

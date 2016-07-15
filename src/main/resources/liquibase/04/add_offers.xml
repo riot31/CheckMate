@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="v2" author="o.lutsevich">
+        <!-- Drop tables if exists -->
+        <sql splitStatements="true">
+            DROP TABLE IF EXISTS `evaluations`;
+            DROP TABLE IF EXISTS `offers`;
+
+        </sql>
+
+        <!-- Create tables -->
+        <sql splitStatements="true">
+
+            CREATE TABLE `offers` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `owner` int NOT NULL,
+            `message` varchar(255) NOT NULL,
+            `status` varchar(55),
+            PRIMARY KEY (`id`)
+            )DEFAULT CHARSET=utf8;;
+
+            CREATE TABLE `evaluations` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `offerId` int NOT NULL,
+            `userId` int NOT NULL,
+            `value` int NOT NULL,
+            PRIMARY KEY (`id`)
+            )DEFAULT CHARSET=utf8;;
+
+            ALTER TABLE `offers` ADD CONSTRAINT `offers_fk0` FOREIGN KEY (`owner`) REFERENCES `users`(`userId`);
+
+            ALTER TABLE `evaluations` ADD CONSTRAINT `evaluations_fk0` FOREIGN KEY (`offerId`) REFERENCES `offers`(`id`);
+
+            ALTER TABLE `evaluations` ADD CONSTRAINT `evaluations_fk1` FOREIGN KEY (`userId`) REFERENCES `users`(`userId`);
+
+
+
+            ALTER TABLE `evaluations` ADD UNIQUE `unique_index`(`offerId`, `userId`);
+
+
+        </sql>
+
+    </changeSet>
+
+
+</databaseChangeLog>

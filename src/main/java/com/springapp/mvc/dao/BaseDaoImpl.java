@@ -1,7 +1,9 @@
 package com.springapp.mvc.dao;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -54,5 +56,13 @@ public abstract class BaseDaoImpl<T, ID extends Serializable> {
 
     public List<T> findAllByCriteria(SearchCriteria criteria) {
         return getSession().createCriteria(entityClass).add(Restrictions.eq(criteria.getNameColumn(), criteria.getValue())).list();
+    }
+
+    public List<T> findAllByCriterias(List<Criterion> criteriaList) {
+        Criteria criteria = getSession().createCriteria(entityClass);
+        for (Criterion searchCriteria : criteriaList) {
+            criteria.add(searchCriteria);
+        }
+        return criteria.list();
     }
 }

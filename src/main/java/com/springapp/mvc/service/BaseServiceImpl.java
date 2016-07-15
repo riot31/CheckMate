@@ -2,6 +2,7 @@ package com.springapp.mvc.service;
 
 import com.springapp.mvc.dao.BaseDao;
 import com.springapp.mvc.dao.SearchCriteria;
+import org.hibernate.criterion.Criterion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,5 +50,9 @@ public abstract class BaseServiceImpl<T, ID extends Serializable> {
 
     public List<T> findAllByCriteria(SearchCriteria criteria) {
         return baseDao.findAllByCriteria(criteria);
+    }
+
+    public List<T> findAllByCriterias(List<Criterion> criteriaList) {
+        return baseDao.findAllByCriterias(criteriaList);
     }
 }

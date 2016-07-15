@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
  */
 @Service("messageServiceImpl")
 public class MessageServiceImpl extends BaseServiceImpl<Message, Integer> implements MessageService {
+
     @Autowired
     private MessageConverter converter;
 
@@ -21,4 +22,5 @@ public class MessageServiceImpl extends BaseServiceImpl<Message, Integer> implem
     public MessageForm toForm(Message message) {
         return converter.toForm(message);
     }
+
 }

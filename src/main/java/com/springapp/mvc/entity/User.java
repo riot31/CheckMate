@@ -23,10 +23,10 @@ public class User {
     private String email;
 
     @Column(name = "games")
-    private Integer games;
+    private Integer games = 0;
 
     @Column(name = "losses")
-    private Integer losses;
+    private Integer losses = 0;
 
     public Integer getUserId() {
         return userId;
@@ -74,5 +74,13 @@ public class User {
 
     public void setLosses(Integer losses) {
         this.losses = losses;
+    }
+
+    public void gamesIncrement() {
+        this.games++;
+    }
+
+    public void lossesIncrement() {
+        this.losses++;
     }
 }

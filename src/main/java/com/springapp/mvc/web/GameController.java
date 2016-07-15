@@ -2,9 +2,11 @@ package com.springapp.mvc.web;
 
 import com.springapp.mvc.entity.Game;
 import com.springapp.mvc.service.GameService;
+import com.springapp.mvc.boots.Boots;
 import com.springapp.mvc.service.enums.GameStatus;
 import com.springapp.mvc.service.form.GameForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +20,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/game")
+@PreAuthorize("isAuthenticated()")
 public class GameController {
     @Autowired
     private GameService gameService;
@@ -27,7 +30,7 @@ public class GameController {
     public String createGame(GameForm form, Map<String, Object> map) {
         Game newGame = gameService.toEntity(form);
         gameService.saveOrUpdate(newGame);
-        map.put("gameUuid", newGame.getUuid());
+        map.put("game", newGame);
         return "checkmate";
     }
 
@@ -55,6 +58,11 @@ public class GameController {
     @RequestMapping(value = "/go", method = RequestMethod.GET)
     public String goGame(String uuid, Map<String, Object> map) {
         Game game = gameService.find(uuid);
+        if (game.getMember2().equals(Boots.SIMPLE_BOOT.getBootName())) {
+            map.put("socketSuffix", Boots.SIMPLE_BOOT.getBootName());
+        } else if (game.getMember2().equals(Boots.NEGAMAX.getBootName())) {
+            map.put("socketSuffix", Boots.NEGAMAX.getBootName());
+        }
         map.put("game", game);
         map.put("strokeList", gameService.getStrokes(game));
         return "checkmate";

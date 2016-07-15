@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="f" uri="/WEB-INF/tags/functions.tld" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -11,18 +12,17 @@
 
 <div class="container">
     <div class="component">
-        <h2>Выберите партию</h2>
-
-        <p>Здесь вы граете с реальными людьми и бла бла бла .................................
-            если хотите померяться силами с ботом то переходите по ссылке <a href="#">Boot вас всех порвёт!</a>
+        <h2>${f:getMessage("page.game.select")}</h2>
+        <p>
+            ${f:getMessage("page.game.info")}
         </p>
         <table>
             <thead>
             <tr>
-                <th>Соперник</th>
-                <th>Соперник</th>
-                <th>Заголовок</th>
-                <th>Дата создания</th>
+                <th>${f:getMessage("page.game.member")}</th>
+                <th>${f:getMessage("page.game.member")}</th>
+                <th>${f:getMessage("page.game.headline")}</th>
+                <th>${f:getMessage("page.game.date")}</th>
             </tr>
             </thead>
             <tbody>

@@ -1,7 +1,5 @@
 package com.springapp.mvc.service.form;
 
-import java.util.Date;
-
 /**
  * Created by o.lutsevich on 6.2.16.
  */
@@ -10,6 +8,16 @@ public class MessageForm {
     private String message;
     private String gameUuid;
     private String type;
+
+    public MessageForm() {
+    }
+
+    public MessageForm(String username, String message, String gameUuid, String type) {
+        this.username = username;
+        this.message = message;
+        this.gameUuid = gameUuid;
+        this.type = type;
+    }
 
     public String getUsername() {
         return username;

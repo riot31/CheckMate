@@ -10,4 +10,8 @@ public final class Functions {
     public static String getMessage(String key) {
         return MessageUtils.getMessage(key);
     }
+
+    public static String castToStroke(String message) {
+        return MessageUtils.castToStroke(message);
+    }
 }

@@ -5,7 +5,8 @@ package com.springapp.mvc.service.enums;
  */
 public enum MessageType {
     MESSAGE("message"),
-    STROKE("stroke");
+    STROKE("stroke"),
+    END("end");
 
     private String type;
 

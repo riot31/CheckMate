@@ -29,6 +29,8 @@
                 <value>com.springapp.mvc.entity.User</value>
                 <value>com.springapp.mvc.entity.Game</value>
                 <value>com.springapp.mvc.entity.Message</value>
+                <value>com.springapp.mvc.entity.Offer</value>
+                <value>com.springapp.mvc.entity.Evaluation</value>
             </list>
         </property>
         <property name="hibernateProperties">

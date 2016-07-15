@@ -55,4 +55,10 @@ public class UserController {
         }
         return result;
     }
+
+    @RequestMapping(value = "/user/statistics", method = RequestMethod.GET)
+    public String showStatistics(Principal principal, Map<String, Object> map) {
+        map.put("user", userService.findByUsername(principal.getName()));
+        return "user";
+    }
 }

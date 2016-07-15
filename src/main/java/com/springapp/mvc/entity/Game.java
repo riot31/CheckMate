@@ -1,6 +1,7 @@
 package com.springapp.mvc.entity;
 
 import com.springapp.mvc.service.enums.GameStatus;
+import com.springapp.mvc.service.enums.MessageType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -38,6 +39,17 @@ public class Game {
     @OneToMany(targetEntity = Message.class, mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     private List<Message> messageList = new ArrayList<Message>(0);
+
+    public Game() {
+
+    }
+
+    public Game(String headline, String member1, String member2, String status) {
+        this.headline = headline;
+        this.member1 = member1;
+        this.member2 = member2;
+        this.status = status;
+    }
 
     public String getUuid() {
         return uuid;
@@ -93,5 +105,15 @@ public class Game {
 
     public void setMessageList(List<Message> messageList) {
         this.messageList = messageList;
+    }
+
+    public int getStrokesCount() {
+        int result = 0;
+        for (Message message : messageList) {
+            if (message.getType().equals(MessageType.STROKE.getType())) {
+                result++;
+            }
+        }
+        return result;
     }
 }

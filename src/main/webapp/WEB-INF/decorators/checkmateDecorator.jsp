@@ -18,47 +18,55 @@
 
 <nav id="menu-wrap">
     <ul id="menu">
-        <li><a href="/">Главная</a></li>
+        <li><a href="/">${f:getMessage('navigation.home')}</a></li>
 
         <li>
-            <a href="/game/show">Найти игру</a>
+            <a href="/game/show">${f:getMessage("navigation.game")}</a>
             <ul>
                 <li id="createGame">
-                    <label for="modal-3">Создать игру</label>
+                    <label for="modal-3">${f:getMessage("navigation.game.create")}</label>
                 </li>
                 <li>
-                    <a href="/game/show">Список игр</a>
+                    <a href="/game/show">${f:getMessage("navigation.game.show")}</a>
                 </li>
 
                 <li>
-                    <a href="">Играть в ботом</a>
+                    <a href="/boots">${f:getMessage("navigation.game.boot")}</a>
                 </li>
                 <li>
-                    <a href="">Задачи</a>
+                    <a href="#">${f:getMessage("navigation.game.task")}</a>
                 </li>
             </ul>
         </li>
 
-        <li><a href="">О Сайте</a></li>
-        <li><a href="">Контакты</a></li>
+        <li>
+            <a href="#">${f:getMessage("navigation.about")}</a>
+            <ul>
+                <li><a href="/regulations">${f:getMessage("navigation.regulations")}</a></li>
+                <li><a href="/statistics">${f:getMessage("navigation.statistics")}</a></li>
+                <li><a href="#">${f:getMessage("navigation.forum")}</a></li>
+            </ul>
+        </li>
+
+        <li><a href="/offer/show">${f:getMessage("navigation.offers")}</a></li>
         <sec:authorize access="isAnonymous()">
-            <li><label class="btn-label" for="modal-1">Вход</label></li>
+            <li><label class="btn-label" for="modal-1" id="sign-label">Вход</label></li>
         </sec:authorize>
         <sec:authorize access="isAuthenticated()">
             <li>
-                <a href="" id="username">${username}</a>
+                <a href="/user/statistics" id="username">${username}</a>
                 <ul>
 
                     <li>
-                        <a href="">Мой аккаунт</a>
+                        <a href="/user/statistics">${f:getMessage("navigation.user.home")}</a>
 
                     </li>
                     <li>
-                        <a href="/game/byUser">Мои игры</a>
+                        <a href="/game/byUser">${f:getMessage("navigation.user.games")}</a>
 
                     </li>
                     <li>
-                        <a href="/logout">Выход</a>
+                        <a href="/logout">${f:getMessage("navigation.logout")}</a>
 
                     </li>
                 </ul>
@@ -73,59 +81,77 @@
     ${f:getMessage("footer.message")}
 </div>
 
-<div class="modal">
-    <input type="checkbox" class="modal-open" id="modal-1" hidden/>
+<sec:authorize access="isAnonymous()">
 
-    <div class="modal-wrap" aria-hidden="true" role="dialog">
-        <label for="modal-1" class="modal-overlay"></label>
+    <div class="modal">
+        <input type="checkbox" class="modal-open" id="modal-1" hidden/>
 
-        <div class="modal-dialog">
-            <div class="modal-header">
-                <h2>Войдите или <label class="btn-label" for="modal-2">зарегистрируйтесь</label></h2>
-                <label for="modal-1" class="btn-close" aria-hidden="true">×</label>
-            </div>
-            <div class="modal-body">
-                <form action="/login" method="post">
-                    <input name="username" placeholder="${f:getMessage("form.placeholder.username")}" class="textbox"
-                           required/>
-                    <input name="password" placeholder="${f:getMessage("form.placeholder.password")}" class="textbox"
-                           type="password" required/>
-                    <input name="remember-me" id="check" type="checkbox" checked="checked"/>
-                    <label for="check">${f:getMessage("form.remember")}</label>
+        <div class="modal-wrap" aria-hidden="true" role="dialog">
+            <label for="modal-1" class="modal-overlay"></label>
 
-                    <input name="submit" class="btn btn-form" type="submit" value="${f:getMessage("form.submit")}"/>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    <h2>Войдите или <label id="reg-label" class="btn-label" for="modal-2">зарегистрируйтесь</label></h2>
+                    <label for="modal-1" class="btn-close" aria-hidden="true">×</label>
+                </div>
+                <div class="modal-body">
+                    <form action="/login" method="post">
+                        <input name="username" placeholder="${f:getMessage("form.placeholder.username")}" class="textbox"
+                               required/>
+                        <input name="password" placeholder="${f:getMessage("form.placeholder.password")}" class="textbox"
+                               type="password" required/>
+                        <input name="remember-me" id="check" type="checkbox" checked="checked"/>
+                        <label for="check">${f:getMessage("form.remember")}</label>
 
-
-<div class="modal">
-    <input type="checkbox" class="modal-open" id="modal-2" hidden/>
-
-    <div class="modal-wrap" aria-hidden="true" role="dialog">
-        <label for="modal-2" class="modal-overlay"></label>
-
-        <div class="modal-dialog">
-            <div class="modal-header">
-                <h2>Регистрация</h2>
-                <label for="modal-2" class="btn-close" aria-hidden="true">×</label>
-            </div>
-            <div class="modal-body">
-                <form action="/user/add" method="post">
-                    <input name="username" placeholder="${f:getMessage("form.placeholder.username")}" class="textbox"
-                           required/>
-                    <input name="email" placeholder="${f:getMessage("form.placeholder.email")}" class="textbox"
-                           type="email" required/>
-                    <input name="password" placeholder="${f:getMessage("form.placeholder.password")}" class="textbox"
-                           type="password" required/>
-                    <input name="submit" class="btn btn-form" type="submit" value="${f:getMessage('form.submit')}"/>
-                </form>
+                        <input name="submit" class="btn btn-form" type="submit" value="${f:getMessage("form.submit")}"/>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+
+    <div class="modal">
+        <input type="checkbox" class="modal-open" id="modal-2" hidden/>
+
+        <div class="modal-wrap" aria-hidden="true" role="dialog">
+            <label for="modal-2" class="modal-overlay"></label>
+
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    <h2>Регистрация</h2>
+                    <label for="modal-2" class="btn-close" aria-hidden="true">×</label>
+                </div>
+                <div class="modal-body">
+                    <form action="/user/add" method="post">
+                        <input name="username" placeholder="${f:getMessage("form.placeholder.username")}" class="textbox"
+                               required/>
+                        <input name="email" placeholder="${f:getMessage("form.placeholder.email")}" class="textbox"
+                               type="email" required/>
+                        <input name="password" placeholder="${f:getMessage("form.placeholder.password")}" class="textbox"
+                               type="password" required/>
+                        <input name="submit" class="btn btn-form" type="submit" value="${f:getMessage('form.submit')}"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("sign-label").addEventListener("click", setSelected, false);
+        document.getElementById("reg-label").addEventListener("click", setSelected, false);
+
+        function setSelected(evt) {
+            if (evt.target.id == "sign-label") {
+                document.querySelector("form[action='/login'] input[name='username']").select();
+            }
+            if (evt.target.id == "reg-label") {
+                document.querySelector("form[action='/user/add'] input[name='username']").select();
+            }
+        }
+
+    </script>
+</sec:authorize>
 
 
 <div class="modal">
