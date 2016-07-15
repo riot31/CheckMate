@@ -27,7 +27,6 @@
     <dependencies>
 
         <!-- web socket -->
-        <!--TODO разобраться со значением места-->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-websocket</artifactId>
