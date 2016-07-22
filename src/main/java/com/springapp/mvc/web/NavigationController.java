@@ -1,6 +1,6 @@
 package com.springapp.mvc.web;
 
-import com.springapp.mvc.boots.Boots;
+import com.springapp.mvc.boot.Boots;
 import com.springapp.mvc.entity.User;
 import com.springapp.mvc.service.UserService;
 import com.springapp.mvc.service.util.MessageUtils;

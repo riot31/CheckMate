@@ -1,4 +1,4 @@
-package com.springapp.mvc.boots.board;
+package com.springapp.mvc.boot.board;
 
 import com.springapp.mvc.entity.Message;
 import com.springapp.mvc.service.GameService;
@@ -21,7 +21,7 @@ public class BoardService {
 
     public Board getBoard(String gameUuid) {
         board = new Board();
-        for (Message message : filterStroke(gameService.find(gameUuid).getMessageList())){
+        for (Message message : filterStroke(gameService.find(gameUuid).getMessageList())) {
             makeMove(message);
         }
         return board;

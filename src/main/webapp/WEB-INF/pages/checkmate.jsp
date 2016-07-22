@@ -10,7 +10,12 @@
 </head>
 <body>
 
-<h3 id="targetStroke">Loading...</h3>
+<h3 id="targetStroke" class="stroke-black">Loading...</h3>
+<c:if test="${empty socketSuffix}">
+    <div class="right">
+        <label class="btn btn-form" for="modal-surrender">${f:getMessage("game.surrender")}</label>
+    </div>
+</c:if>
 
 <div class="columns">
     <div class="column" draggable="true" title="A8 - 0">
@@ -264,6 +269,34 @@
         <input type="button" value="send" id="sender"/>
     </div>
 </section>
+
+<div id="safe">
+
+</div>
+
+
+<c:if test="${empty socketSuffix}">
+    <div class="modal">
+        <input type="checkbox" class="modal-open" id="modal-surrender" hidden/>
+
+        <div class="modal-wrap" aria-hidden="true" role="dialog">
+            <label for="modal-surrender" class="modal-overlay"></label>
+
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    <h2>${f:getMessage("game.surrender")}</h2>
+                    <label for="modal-surrender" class="btn-close" aria-hidden="true">×</label>
+                </div>
+                <div class="modal-body">
+                    <p>${f:getMessage("game.surrender.info")}</p>
+                    <input name="submit" class="btn btn-form" type="button" id="game-surrender"
+                           value="${f:getMessage("game.surrender")}"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</c:if>
+
 <script>
     // init jsp
     var snd = new Audio("/resources/audio/ICQ.mp3"); // buffers automatically when created
@@ -276,15 +309,15 @@
     var aTime;
     var bTime;
 
-    if(blackUser == "${socketSuffix}") {
-        socketSuffix = "/" + blackUser + "/";
+    if (blackUser == "${socketSuffix}") {
+        socketSuffix = "/${socketSuffix}/";
     }
 
     <c:forEach items="${strokeList}" var="stroke">
     strokes.push("${stroke.message}");
     </c:forEach>
 
-    //    game
+    //game
     var doc = document;
     var parent = doc.getElementsByClassName("columns")[0];
 
@@ -525,9 +558,6 @@
 
         if (dragSrcEl != this) {
             if (this.classList.contains('action')) {
-                //double swap
-                //dragSrcEl.innerHTML = '<div class="item">&emsp;</div>';
-                //this.innerHTML = e.dataTransfer.getData('text/html');
                 [].forEach.call(items, function (col) {
                     col.removeEventListener('dragstart', handleDragStart, false);
                 });
@@ -549,7 +579,7 @@
 
 
     function changeDragStart(color) {
-        document.getElementById("targetStroke").innerHTML = "Ход: " + (color == 'white' ? whiteUser : blackUser);
+        setInfo(color);
         [].forEach.call(items, function (col) {
             if (color == "black" && col.querySelectorAll("[class*='black']").length > 0 && currentUser == blackUser) {
                 col.addEventListener('dragstart', handleDragStart, false);
@@ -560,14 +590,29 @@
         });
     }
 
+    function setInfo(color) {
+        var info = "${f:getMessage("game.stroke")} " + (color == 'white' ? whiteUser : blackUser);
+        var el = doc.getElementById("targetStroke");
+        el.innerHTML =info;
+        if (color == 'white') {
+            el.className = "stroke-white";
+        } else {
+            el.className = "stroke-black";
+        }
+    }
+
     function runStroke(coordination) {
         var tempStroke = coordination.split(" ");
+        console.log(parent.children[Number(tempStroke[1])].innerHTML);
+        if (parent.children[Number(tempStroke[1])].querySelectorAll(".pieces").length > 0) {
+            $('#safe').append(parent.children[Number(tempStroke[1])].innerHTML);
+        }
         parent.children[Number(tempStroke[1])].innerHTML = parent.children[Number(tempStroke[0])].innerHTML;
         parent.children[Number(tempStroke[0])].innerHTML = '<div class="item">&emsp;</div>';
         if (statusGame !== "завершена") {
-            if (document.querySelectorAll("[class*='king']").length == 1) {
+            if (parent.querySelectorAll("[class*='king']").length == 1) {
                 statusGame = "завершена";
-                if (document.querySelector("[class*='king-wh")) {
+                if (parent.querySelector("[class*='king-wh")) {
                     sendEnd(whiteUser);
                 } else {
                     sendEnd(blackUser);
@@ -578,29 +623,38 @@
 
 
     //chat
-    //TODO вывести оповещение если упал connection
     var socket = new SockJS("/room");
     var stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         stompClient.subscribe("/topic/" + gameUuid, function (message) {
-            if (JSON.parse(message.body).type == "message") {
+            if (JSON.parse(message.body).type == "stroke") {
+                bTime = Date.now();
+                showTime(bTime - aTime);
+                showStroke(JSON.parse(message.body).username, JSON.parse(message.body).message);
+            } else if (JSON.parse(message.body).type == "message") {
                 if (JSON.parse(message.body).username == currentUser) {
                     showMessageSelf(JSON.parse(message.body).message);
                 } else {
                     showMessageOther(JSON.parse(message.body).message);
                 }
-                doc.getElementById("message").value = "";
-            } else {
-                if (JSON.parse(message.body).type == "stroke") {
-                    bTime = Date.now();
-                    showTime(bTime - aTime);
-                    showStroke(JSON.parse(message.body).username, JSON.parse(message.body).message);
-                } else {
-                    showEnd(JSON.parse(message.body).message);
-                }
+            } else if (JSON.parse(message.body).type == "end") {
+                showEnd(JSON.parse(message.body).message);
+            } else if (JSON.parse(message.body).type == "performance") {
+                blackUser = JSON.parse(message.body).message;
+                activateButton();
             }
             scrollDown();
-        })
+        });
+        <c:if test="${not empty performance}">
+            stompClient.send("/checkmate/room/performance/" + gameUuid, {}, JSON.stringify({
+                "message": currentUser,
+                "type": "performance",
+                "username": currentUser
+            }));
+        </c:if>
+    }, function (message) {
+        // check message for disconnect
+        $('#discussion').append('<li class="stroke"><p style="color: rgb(183, 183, 13);;"><em><b>' + '${f:getMessage("error.stomp.disconnect")}' + '</b></em></p></li>');
     });
 
     function showTime(time) {
@@ -611,13 +665,13 @@
 
     function sendMessage() {
         var message = doc.getElementById("message").value;
+        doc.getElementById("message").value = "";
         if (message != "") {
-            stompClient.send("/checkmate/room/"  + gameUuid, {}, JSON.stringify({
+            stompClient.send("/checkmate/room/" + gameUuid, {}, JSON.stringify({
                 "message": message,
                 "type": "message",
                 "username": currentUser
             }));
-
         }
     }
 
@@ -628,7 +682,7 @@
             "type": "stroke",
             "username": currentUser
         }));
-        if(socketSuffix !== "") {
+        if (socketSuffix !== "") {
             showStroke(currentUser, stroke);
         }
     }
@@ -651,7 +705,7 @@
 
     function showStroke(from, message) {
         $('#discussion').append('<li class="stroke"><p><em><b>' + from + '</b> ' + getStroke(message) + '</em></p></li>');
-        if(from !== currentUser) {
+        if (from !== currentUser) {
             snd.play();
         }
         runStroke(message);
@@ -668,6 +722,8 @@
         [].forEach.call(items, function (col) {
             col.removeEventListener('dragstart', handleDragStart, false);
         });
+        document.getElementById("targetStroke").innerHTML = "Игра завершена";
+
     }
 
     function scrollDown() {
@@ -705,11 +761,15 @@
         ];
         return " походил с " + notations[coordinate[0]] + " на " + notations[coordinate[1]];
     }
-    $(document).ready(function() {
+    $(document).ready(function () {
         if (strokes.length > 0) {
             [].forEach.call(strokes, function (message, index) {
                 setTimeout(runStroke, 300 * index, message);
             });
+        }
+
+        if (blackUser === "") {
+            disableButton();
         }
 
         setTimeout(function () {
@@ -735,7 +795,23 @@
             }
         }, 300 * strokes.length);
 
-    })
+    });
+
+    <c:if test="${not empty performance}">
+        doc.getElementById("game-surrender").addEventListener("click", gameSurrender, false);
+        function gameSurrender() {
+            var lossUser = currentUser === whiteUser ? sendEnd(blackUser) : sendEnd(whiteUser);
+            $('#modal-surrender').click();
+        }
+
+        function disableButton() {
+            document.getElementById("game-surrender").disabled = true;
+        }
+
+        function activateButton() {
+            document.getElementById("game-surrender").disabled = false;
+        }
+    </c:if>
 </script>
 
 </body>

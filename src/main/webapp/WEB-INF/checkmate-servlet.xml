@@ -67,6 +67,8 @@
         </property>
     </bean>
 
+    <import resource="boots-heads.xml"/>
     <import resource="spring-security.xml"/>
+
 
 </beans>

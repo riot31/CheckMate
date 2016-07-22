@@ -1,4 +1,4 @@
-package com.springapp.mvc.boots.board;
+package com.springapp.mvc.boot.board;
 
 /**
  * Created by o.lutsevich on 6.7.16.
@@ -19,9 +19,5 @@ public enum Figure {
 
     public Integer getIndex() {
         return index;
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
     }
 }

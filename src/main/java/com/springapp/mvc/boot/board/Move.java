@@ -1,4 +1,4 @@
-package com.springapp.mvc.boots.board;
+package com.springapp.mvc.boot.board;
 
 /**
  * Created by o.lutsevich on 6.7.16.
@@ -22,10 +22,6 @@ public class Move {
         this.stroke = stroke;
     }
 
-    public Move(Item predator) {
-        this.predator = predator;
-    }
-
     public Item getPredator() {
         return predator;
     }
@@ -42,11 +38,12 @@ public class Move {
         this.victim = victim;
     }
 
+
     public int getStroke() {
         if (victim == null) {
             return stroke;
         } else {
-            return victim.getCoordinate();
+            return victim.getPosition();
         }
     }
 
@@ -54,7 +51,7 @@ public class Move {
         if (victim == null) {
             this.stroke = stroke;
         } else {
-            victim.changeCoordinate(stroke);
+            victim.setPosition(stroke);
         }
     }
 }

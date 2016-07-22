@@ -1,6 +1,4 @@
-package com.springapp.mvc.boots.board;
-
-import com.springapp.mvc.boots.board.Figure;
+package com.springapp.mvc.boot.board;
 
 /**
  * Created by o.lutsevich on 6.7.16.
@@ -24,11 +22,7 @@ public enum WeightFigure {
         return weight;
     }
 
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public static Integer getWeightFigure(Figure figure) {
-        return values()[values().length - figure.getIndex()].getWeight();
+    public static Integer getWeightFigure(int index) {
+        return values()[values().length - index - 1].getWeight();
     }
 }

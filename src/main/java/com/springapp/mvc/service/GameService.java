@@ -17,4 +17,6 @@ public interface GameService extends BaseService<Game, String> {
     List<Message> getStrokes(Game game);
 
     List<Game> byUsername(String username);
+
+    void gameOver(String gameUuid, String userWin);
 }

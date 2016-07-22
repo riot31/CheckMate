@@ -76,11 +76,20 @@ public class User {
         this.losses = losses;
     }
 
-    public void gamesIncrement() {
+    private void gamesIncrement() {
         this.games++;
     }
 
-    public void lossesIncrement() {
+    private void lossesIncrement() {
         this.losses++;
+    }
+
+    public void lossGame() {
+        gamesIncrement();
+        lossesIncrement();
+    }
+
+    public void winGame() {
+        gamesIncrement();
     }
 }

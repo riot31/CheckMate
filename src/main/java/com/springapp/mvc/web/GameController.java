@@ -1,8 +1,9 @@
 package com.springapp.mvc.web;
 
+import com.springapp.mvc.boot.HeadBoot;
 import com.springapp.mvc.entity.Game;
 import com.springapp.mvc.service.GameService;
-import com.springapp.mvc.boots.Boots;
+import com.springapp.mvc.boot.Boots;
 import com.springapp.mvc.service.enums.GameStatus;
 import com.springapp.mvc.service.form.GameForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
+import javax.annotation.Resource;
 import java.security.Principal;
 import java.util.Map;
 
@@ -24,6 +26,9 @@ import java.util.Map;
 public class GameController {
     @Autowired
     private GameService gameService;
+
+    @Resource(name = "bootServices")
+    private Map<String, HeadBoot> bootServices;
 
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -47,23 +52,25 @@ public class GameController {
     }
 
     @RequestMapping(value = "/take", method = RequestMethod.GET)
-    public String take(String uuid, Principal principal) {
+    public String take(String uuid, Principal principal, Map<String, Object> map) {
         Game game = gameService.find(uuid);
         game.setMember2(principal.getName());
         game.setStatus(GameStatus.START.getStatus());
         gameService.saveOrUpdate(game);
-        return "redirect:/go?id" + uuid;
+        return "redirect:/game/go?uuid=" + uuid + "&performance=" + principal.getName();
     }
 
     @RequestMapping(value = "/go", method = RequestMethod.GET)
-    public String goGame(String uuid, Map<String, Object> map) {
+    public String goGame(String uuid, String performance, Map<String, Object> map) {
         Game game = gameService.find(uuid);
-        if (game.getMember2().equals(Boots.SIMPLE_BOOT.getBootName())) {
-            map.put("socketSuffix", Boots.SIMPLE_BOOT.getBootName());
-        } else if (game.getMember2().equals(Boots.NEGAMAX.getBootName())) {
-            map.put("socketSuffix", Boots.NEGAMAX.getBootName());
+        HeadBoot boot = bootServices.get(game.getMember2());
+        if (boot != null) {
+            map.put("socketSuffix", boot.getName());
         }
         map.put("game", game);
+        if (performance != null) {
+            map.put("performance", performance);
+        }
         map.put("strokeList", gameService.getStrokes(game));
         return "checkmate";
     }
