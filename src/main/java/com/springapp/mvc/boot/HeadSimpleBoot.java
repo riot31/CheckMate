@@ -18,7 +18,7 @@ public class HeadSimpleBoot extends HeadBoot {
 
     private Move strokeResult;
 
-    private final Integer depthStart = 3;
+    private final Integer depthStart = 5;
 
     @Autowired
     private BoardService boardService;
@@ -32,9 +32,13 @@ public class HeadSimpleBoot extends HeadBoot {
     }
 
     public Move brain(String gameUuid) {
+        return brain(gameUuid, IS_BLACK);
+    }
+
+    public Move brain(String gameUuid, boolean isBlack) {
         Board board = getGame(gameUuid);
         strokeResult = null;
-        int tmp = alphaBeta(-WeightFigure.INFINITY.getWeight(), WeightFigure.INFINITY.getWeight(), board, IS_BLACK, depthStart);
+        int tmp = alphaBeta(-Figure.KING.getWeight(), Figure.KING.getWeight(), board, isBlack, depthStart);
         if (!checkCheater(board, strokeResult)) {
             return null;
         }
@@ -45,13 +49,13 @@ public class HeadSimpleBoot extends HeadBoot {
         if (depth == 0) {
             return isBlack ? Evaluator.consider(board) : -Evaluator.consider(board);
         }
-        int score = -WeightFigure.INFINITY.getWeight();
+        int score = -Figure.KING.getWeight();
         for (Move stroke : generateMoves(board, isBlack)) {
             if (strokeResult == null) {
                 strokeResult = stroke;
             }
             if (stroke.getVictim() != null && Figure.KING.getIndex().equals(stroke.getVictim().getValue() % DIFFERENCE_COLOR) ) {
-                return WeightFigure.INFINITY.getWeight();
+                return Figure.KING.getWeight();
             }
             board.moveItem(stroke);
             int tmp = -alphaBeta(-beta, -alpha, board, !isBlack, depth - 1);

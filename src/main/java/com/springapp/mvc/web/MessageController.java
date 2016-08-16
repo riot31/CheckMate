@@ -2,6 +2,7 @@ package com.springapp.mvc.web;
 
 import com.springapp.mvc.boot.HeadBoot;
 import com.springapp.mvc.boot.HeadSimpleBoot;
+import com.springapp.mvc.boot.QueueStroke;
 import com.springapp.mvc.boot.board.Move;
 import com.springapp.mvc.service.GameService;
 import com.springapp.mvc.service.MessageService;
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @Controller
 public class MessageController {
+    private final static String BLACK_COLOR = "black";
 
     @Autowired
     private MessageService messageService;
@@ -30,9 +32,6 @@ public class MessageController {
 
     @Resource(name = "bootServices")
     private Map<String, HeadBoot> bootServices;
-
-    @Autowired
-    private HeadSimpleBoot simpleBoot;
 
 
     @MessageMapping("/room/{gameUuid}")
@@ -69,6 +68,15 @@ public class MessageController {
             messageBoot = new MessageForm(bootName, "" + stroke.getPredator().getPosition() + " " + stroke.getStroke(), gameUuid, MessageType.STROKE.getType());
             messageService.saveOrUpdate(messageService.toEntity(messageBoot));
         }
+        return messageBoot;
+    }
+
+    @MessageMapping("/room/scramble/{gameUuid}")
+    @SendTo("/topic/{gameUuid}")
+    public MessageForm sendResponse(@DestinationVariable String gameUuid, QueueStroke queue) {
+        Move stroke = bootServices.get(queue.getBootName()).brain(gameUuid, queue.isBlack());
+        MessageForm messageBoot = new MessageForm(queue.getBootName(), "" + stroke.getPredator().getPosition() + " " + stroke.getStroke(), gameUuid, MessageType.STROKE.getType());
+        messageService.saveOrUpdate(messageService.toEntity(messageBoot));
         return messageBoot;
     }
 }

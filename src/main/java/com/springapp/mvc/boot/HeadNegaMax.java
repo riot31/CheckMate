@@ -32,11 +32,15 @@ public class HeadNegaMax extends HeadBoot {
     }
 
     public Move brain(String gameUuid) {
+        return brain(gameUuid, IS_BLACK);
+    }
+
+    public Move brain(String gameUuid, boolean isBlack) {
         Board board = getGame(gameUuid);
 
-        int score = -WeightFigure.INFINITY.getWeight()  * 100;
+        int score = -Figure.KING.getWeight();
 
-        for (Move stroke : generateMoves(board, IS_BLACK)) {
+        for (Move stroke : generateMoves(board, isBlack)) {
             board.moveItem(stroke);
             int tmp = -negaMax(board, false, 3);
             board.unMoveItem(stroke);
@@ -57,7 +61,7 @@ public class HeadNegaMax extends HeadBoot {
             return Evaluator.consider(board);
         }
         iteration += 1;
-        int score = -WeightFigure.INFINITY.getWeight() * 100;
+        int score = -Figure.KING.getWeight();
         for (Move stroke : generateMoves(board, isBlack)) {
             board.moveItem(stroke);
             int tmp = -negaMax(board, !isBlack, depth - 1);

@@ -11,11 +11,10 @@
 <body>
 
 <h3 id="targetStroke" class="stroke-black">Loading...</h3>
-<c:if test="${empty socketSuffix}">
-    <div class="right">
-        <label class="btn btn-form" for="modal-surrender">${f:getMessage("game.surrender")}</label>
-    </div>
-</c:if>
+<div class="right">
+    <label class="btn btn-form" for="modal-surrender">${f:getMessage("game.surrender")}</label>
+</div>
+
 
 <div class="columns">
     <div class="column" draggable="true" title="A8 - 0">
@@ -215,7 +214,6 @@
 <section class="module">
 
     <header class="top-bar">
-
         <div class="left">
             <span class="icon typicons-message"></span>
 
@@ -226,7 +224,6 @@
             <span class="icon typicons-minus"></span>
             <span class="icon typicons-times"></span>
         </div>
-
     </header>
 
     <ol class="discussion" id="discussion">
@@ -275,27 +272,26 @@
 </div>
 
 
-<c:if test="${empty socketSuffix}">
-    <div class="modal">
-        <input type="checkbox" class="modal-open" id="modal-surrender" hidden/>
+<div class="modal">
+    <input type="checkbox" class="modal-open" id="modal-surrender" hidden/>
 
-        <div class="modal-wrap" aria-hidden="true" role="dialog">
-            <label for="modal-surrender" class="modal-overlay"></label>
+    <div class="modal-wrap" aria-hidden="true" role="dialog">
+        <label for="modal-surrender" class="modal-overlay"></label>
 
-            <div class="modal-dialog">
-                <div class="modal-header">
-                    <h2>${f:getMessage("game.surrender")}</h2>
-                    <label for="modal-surrender" class="btn-close" aria-hidden="true">×</label>
-                </div>
-                <div class="modal-body">
-                    <p>${f:getMessage("game.surrender.info")}</p>
-                    <input name="submit" class="btn btn-form" type="button" id="game-surrender"
-                           value="${f:getMessage("game.surrender")}"/>
-                </div>
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h2>${f:getMessage("game.surrender")}</h2>
+                <label for="modal-surrender" class="btn-close" aria-hidden="true">×</label>
+            </div>
+            <div class="modal-body">
+                <p>${f:getMessage("game.surrender.info")}</p>
+                <input name="submit" class="btn btn-form" type="button" id="game-surrender"
+                       value="${f:getMessage("game.surrender")}"/>
             </div>
         </div>
     </div>
-</c:if>
+</div>
+
 
 <script>
     // init jsp
@@ -603,7 +599,6 @@
 
     function runStroke(coordination) {
         var tempStroke = coordination.split(" ");
-        console.log(parent.children[Number(tempStroke[1])].innerHTML);
         if (parent.children[Number(tempStroke[1])].querySelectorAll(".pieces").length > 0) {
             $('#safe').append(parent.children[Number(tempStroke[1])].innerHTML);
         }
@@ -620,7 +615,6 @@
             }
         }
     }
-
 
     //chat
     var socket = new SockJS("/room");
@@ -768,7 +762,7 @@
             });
         }
 
-        if (blackUser === "") {
+        if (blackUser === "" || (currentUser != whiteUser && currentUser != blackUser)) {
             disableButton();
         }
 
@@ -797,21 +791,20 @@
 
     });
 
-    <c:if test="${not empty performance}">
-        doc.getElementById("game-surrender").addEventListener("click", gameSurrender, false);
-        function gameSurrender() {
-            var lossUser = currentUser === whiteUser ? sendEnd(blackUser) : sendEnd(whiteUser);
-            $('#modal-surrender').click();
-        }
+    doc.getElementById("game-surrender").addEventListener("click", gameSurrender, false);
+    function gameSurrender() {
+        var lossUser = currentUser === whiteUser ? sendEnd(blackUser) : sendEnd(whiteUser);
+        $('#modal-surrender').click();
+    }
 
-        function disableButton() {
-            document.getElementById("game-surrender").disabled = true;
-        }
+    function disableButton() {
+        document.getElementById("game-surrender").disabled = true;
+    }
 
-        function activateButton() {
-            document.getElementById("game-surrender").disabled = false;
-        }
-    </c:if>
+    function activateButton() {
+        document.getElementById("game-surrender").disabled = false;
+    }
+
 </script>
 
 </body>

@@ -6,7 +6,7 @@ body {
 
 .footer {
     position: absolute;
-    bottom: 3%;
+    top: 0;
 }
 
 /* menu */
@@ -17,6 +17,8 @@ body {
 }
 
 #menu {
+    position: relative;
+    z-index: 2;
     width: 960px;
     margin: 60px auto;
     border: 1px solid #222;
@@ -219,6 +221,10 @@ body {
     margin: 0;
 }
 
+.modal-header h2 label {
+    color: #41d5ff;
+}
+
 .modal .btn-close {
     color: #aaa;
     cursor: pointer;
@@ -387,7 +393,7 @@ body {
 .btn-form {
     margin-top: 10px;
     width: 100%;
-    height: 45px;
+    height: auto;
     border: rgba(0, 0, 0, 0.2) 1px solid;
     box-sizing: border-box;
     background: #dedede;
@@ -425,7 +431,10 @@ body {
     margin: 8px 7px 9px 11px;
     display: block;
     float: left;
-    cursor: move;
+}
+
+.column .item {
+    cursor: default;
 }
 
 .column.action .item {
@@ -448,6 +457,13 @@ body {
     height: 100%;
     background-image: url(../images/figur.png);
     background-repeat: no-repeat;
+    cursor: move;
+}
+
+#safe .pieces {
+    width: 42px;
+    height: 42px;
+    display: inline-block;
 }
 
 .pieces.pawn-black {
@@ -496,6 +512,15 @@ body {
 
 .pieces.bishop-white {
     background-position: -200px -160px;
+}
+
+.stroke-white {
+    color: white;
+    text-shadow: 1px 1px 2px black, 0 0 1em white;
+}
+.stroke-black {
+    color: black;
+    text-shadow: 1px 1px 2px black, 0 0 1em white;
 }
 
 /*chat*/
@@ -625,6 +650,11 @@ body {
     line-height: 0;
 }
 
+.end {
+    color: #a52b1a;
+    font-size: 0.9rem;
+}
+
 .messages {
     background: white;
     padding: 10px;
@@ -653,3 +683,61 @@ body {
     cursor: pointer;
 }
 
+.right {
+    position: absolute;
+    margin: 0 90%;
+}
+
+
+/* Set the size and font of the tab widget */
+.tabGroup {
+    font: 10pt arial, verdana;
+    width: 950px;
+    height: auto;
+}
+
+/* Configure the radio buttons to hide off screen */
+.tabGroup > input[type="radio"] {
+    position: absolute;
+    left:-100px;
+    top:-100px;
+}
+
+/* Configure labels to look like tabs */
+.tabGroup > input[type="radio"] + label {
+    /* inline-block such that the label can be given dimensions */
+    display: inline-block;
+
+
+
+    /* Padding around tab text */
+    padding: 5px 10px;
+
+    /* Set the background color to default gray (non-selected tab) */
+    background-color:#ddd;
+}
+
+/* Focused tabs need to be highlighted as such */
+.tabGroup > input[type="radio"]:focus + label {
+}
+
+/* Checked tabs must be white with the bottom border removed */
+.tabGroup > input[type="radio"]:checked + label {
+    background-color:white;
+    font-weight: bold;
+    border-bottom: 1px solid white;
+    margin-bottom: -1px;
+}
+
+/* The tab content must fill the widgets size and have a nice border */
+.tabGroup > div {
+    display: none;
+    padding: 10px 10px;
+    height: 100%;
+    overflow: auto;
+}
+
+/* This matchs tabs displaying to thier associated radio inputs */
+.tab1:checked ~ .tab1, .tab2:checked ~ .tab2, .tab3:checked ~ .tab3 {
+    display: block;
+}

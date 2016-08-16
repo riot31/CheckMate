@@ -44,6 +44,7 @@
             <ul>
                 <li><a href="/regulations">${f:getMessage("navigation.regulations")}</a></li>
                 <li><a href="/statistics">${f:getMessage("navigation.statistics")}</a></li>
+                <li><a href="/game/findAll">${f:getMessage("navigation.games")}</a></li>
                 <li><a href="#">${f:getMessage("navigation.forum")}</a></li>
             </ul>
         </li>

@@ -3,7 +3,6 @@ package com.springapp.mvc.web;
 import com.springapp.mvc.boot.HeadBoot;
 import com.springapp.mvc.entity.Game;
 import com.springapp.mvc.service.GameService;
-import com.springapp.mvc.boot.Boots;
 import com.springapp.mvc.service.enums.GameStatus;
 import com.springapp.mvc.service.form.GameForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 
 import javax.annotation.Resource;
 import java.security.Principal;
@@ -39,6 +37,12 @@ public class GameController {
         return "checkmate";
     }
 
+    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    public String findAll(Map<String, Object> map) {
+        map.put("gameList", gameService.find());
+        return "gameUser";
+    }
+
     @RequestMapping(value = "/show", method = RequestMethod.GET)
     public String showGames(Map<String, Object> map) {
         map.put("gameList", gameService.find());
@@ -52,7 +56,7 @@ public class GameController {
     }
 
     @RequestMapping(value = "/take", method = RequestMethod.GET)
-    public String take(String uuid, Principal principal, Map<String, Object> map) {
+    public String take(String uuid, Principal principal) {
         Game game = gameService.find(uuid);
         game.setMember2(principal.getName());
         game.setStatus(GameStatus.START.getStatus());
@@ -64,14 +68,17 @@ public class GameController {
     public String goGame(String uuid, String performance, Map<String, Object> map) {
         Game game = gameService.find(uuid);
         HeadBoot boot = bootServices.get(game.getMember2());
+        map.put("game", game);
+        map.put("strokeList", gameService.getStrokes(game));
+        if (bootServices.get(game.getMember1()) != null) {
+            return "scramble-boots";
+        }
         if (boot != null) {
             map.put("socketSuffix", boot.getName());
         }
-        map.put("game", game);
         if (performance != null) {
             map.put("performance", performance);
         }
-        map.put("strokeList", gameService.getStrokes(game));
         return "checkmate";
     }
 }

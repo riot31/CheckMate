@@ -10,5 +10,7 @@ import org.springframework.stereotype.Service;
 public abstract class HeadBoot {
     abstract public Move brain(String gameUuid);
 
+    abstract public Move brain(String gameUuid, boolean isBlack);
+
     abstract public String getName();
 }

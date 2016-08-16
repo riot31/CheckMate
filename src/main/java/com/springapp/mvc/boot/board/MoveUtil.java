@@ -47,24 +47,24 @@ public class MoveUtil {
             }
         } else {
             if (x == 6) {
-                int tmp = checkMove(board, (x - 2) * 8 + y, true);
+                int tmp = checkMove(board, (x - 2) * 8 + y, false);
                 if (tmp == 0) {
                     result[resultCount++] = (x - 2) * 8 + y;
                 }
             }
             if (y < 7) {
-                int tmp = checkMove(board, (x - 1) * 8 + y + 1, true);
+                int tmp = checkMove(board, (x - 1) * 8 + y + 1, false);
                 if (tmp == 1) {
                     result[resultCount++] = (x - 1) * 8 + y + 1;
                 }
             }
             if (y > 0) {
-                int tmp = checkMove(board, (x - 1) * 8 + y - 1, true);
+                int tmp = checkMove(board, (x - 1) * 8 + y - 1, false);
                 if (tmp == 1) {
                     result[resultCount++] = (x - 1) * 8 + y - 1;
                 }
             }
-            int tmp = checkMove(board, (x - 1) * 8 + y, true);
+            int tmp = checkMove(board, (x - 1) * 8 + y, false);
             if (tmp == 0) {
                 result[resultCount] = (x - 1) * 8 + y;
             }
@@ -214,7 +214,7 @@ public class MoveUtil {
         int resultCount = 0;
         boolean isBlack = bishop.getValue() > DIFFERENCE_COLOR;
         for (int i = 1; i < 8; i++) {
-            if (x - i >= 1 && y - i >= 0) {
+            if (x - i >= 0 && y - i >= 0) {
                 int tmp = checkMove(board, (x - i) * 8 + y - i, isBlack);
                 if (tmp == 0) {
                     result[resultCount] = (x - i) * 8 + y - i;
